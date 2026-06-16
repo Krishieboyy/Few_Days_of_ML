@@ -6,3 +6,9 @@ dist-ssr
 dev.log
 dev.err.log
 .vite
+
+# Local secrets — never commit
+.env
+.env.*
+!.env.example
+.vercel

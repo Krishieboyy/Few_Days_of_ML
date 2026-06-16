@@ -4,13 +4,15 @@ import DayModal from './components/DayModal'
 import ProfileSwitcher from './components/ProfileSwitcher'
 import MonthSummary from './components/MonthSummary'
 import TodayChecklist from './components/TodayChecklist'
-import { PROFILES } from './utils/storage'
-import { loadData, saveData, emptyEntry } from './utils/storage'
+import { PROFILES, emptyEntry } from './utils/storage'
 import { toKey, todayKey } from './utils/date'
+import { fetchAll, upsertEntry, subscribe } from './lib/db'
+import { isCloud } from './lib/supabase'
 
 export default function App() {
-  // Persisted study data for both profiles.
-  const [data, setData] = useState(loadData)
+  // Persisted study data for both profiles (loaded from cloud or localStorage).
+  const [data, setData] = useState({ sailorr: {}, dora: {} })
+  const [loading, setLoading] = useState(true)
   const [profileId, setProfileId] = useState('sailorr')
 
   // Visible month.
@@ -23,10 +25,23 @@ export default function App() {
   // Theme (dark by default per the aesthetic direction).
   const [dark, setDark] = useState(true)
 
-  // Persist on every data change.
+  // Initial load + realtime subscription to remote changes.
   useEffect(() => {
-    saveData(data)
-  }, [data])
+    let active = true
+    fetchAll().then((d) => {
+      if (active) {
+        setData(d)
+        setLoading(false)
+      }
+    })
+    const unsubscribe = subscribe((profile, date, entry) => {
+      setData((d) => ({ ...d, [profile]: { ...d[profile], [date]: entry } }))
+    })
+    return () => {
+      active = false
+      unsubscribe()
+    }
+  }, [])
 
   // Reflect theme on <html>.
   useEffect(() => {
@@ -42,13 +57,15 @@ export default function App() {
     setView((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 }))
   const goToday = () => setView({ year: now.getFullYear(), month: now.getMonth() })
 
+  // Optimistically update local state, then persist the single entry.
+  const writeEntry = (key, entry) => {
+    setData((d) => ({ ...d, [profileId]: { ...d[profileId], [key]: entry } }))
+    upsertEntry(profileId, key, entry)
+  }
+
   const saveDay = (entry) => {
     if (!selected) return
-    const key = toKey(selected)
-    setData((d) => ({
-      ...d,
-      [profileId]: { ...d[profileId], [key]: entry },
-    }))
+    writeEntry(toKey(selected), entry)
   }
 
   const selectedEntry = useMemo(
@@ -61,12 +78,8 @@ export default function App() {
 
   const mutateToday = (mutate) => {
     const key = todayKey()
-    setData((d) => {
-      const profEntries = d[profileId] || {}
-      const existing = { ...emptyEntry(), ...profEntries[key] }
-      const updated = mutate(existing)
-      return { ...d, [profileId]: { ...profEntries, [key]: updated } }
-    })
+    const existing = { ...emptyEntry(), ...entries[key] }
+    writeEntry(key, mutate(existing))
   }
 
   const addTask = (text) =>
@@ -86,6 +99,17 @@ export default function App() {
       ...e,
       checklist: (e.checklist || []).filter((i) => i.id !== id),
     }))
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-white/60">
+          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/15 border-t-violet-400" />
+          <p className="text-sm">Syncing your study data…</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen px-4 py-6 sm:px-6 sm:py-10">
@@ -149,8 +173,11 @@ export default function App() {
               onSelectDay={setSelected}
             />
 
-            <footer className="pt-2 text-center text-xs text-white/30">
-              Saved locally on this device · sleep charts &amp; stats coming next
+            <footer className="flex items-center justify-center gap-1.5 pt-2 text-center text-xs text-white/30">
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${isCloud ? 'bg-emerald-400' : 'bg-amber-400'}`}
+              />
+              {isCloud ? 'Synced & shared in real time' : 'Saved locally on this device'}
             </footer>
           </main>
 
