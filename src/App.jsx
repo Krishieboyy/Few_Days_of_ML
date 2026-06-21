@@ -4,6 +4,7 @@ import DayModal from './components/DayModal'
 import ProfileSwitcher from './components/ProfileSwitcher'
 import MonthSummary from './components/MonthSummary'
 import TodayChecklist from './components/TodayChecklist'
+import Splash from './components/Splash'
 import { PROFILES, emptyEntry } from './utils/storage'
 import { toKey, todayKey } from './utils/date'
 import { fetchAll, upsertEntry, subscribe } from './lib/db'
@@ -24,6 +25,13 @@ export default function App() {
 
   // Theme (dark by default per the aesthetic direction).
   const [dark, setDark] = useState(true)
+
+  // Minimum welcome-splash duration (~5s) regardless of how fast data loads.
+  const [minSplash, setMinSplash] = useState(true)
+  useEffect(() => {
+    const t = setTimeout(() => setMinSplash(false), 5000)
+    return () => clearTimeout(t)
+  }, [])
 
   // Initial load + realtime subscription to remote changes.
   useEffect(() => {
@@ -100,15 +108,8 @@ export default function App() {
       checklist: (e.checklist || []).filter((i) => i.id !== id),
     }))
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-white/60">
-          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/15 border-t-violet-400" />
-          <p className="text-sm">Syncing your study data…</p>
-        </div>
-      </div>
-    )
+  if (loading || minSplash) {
+    return <Splash />
   }
 
   return (

@@ -79,3 +79,11 @@
 .animate-pop-in {
   animation: pop-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 1.6s ease-in-out infinite;
+}
