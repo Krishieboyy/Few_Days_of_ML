@@ -5,6 +5,7 @@ import ProfileSwitcher from './components/ProfileSwitcher'
 import MonthSummary from './components/MonthSummary'
 import TodayChecklist from './components/TodayChecklist'
 import Splash from './components/Splash'
+import WaterReminder from './components/WaterReminder'
 import { PROFILES, emptyEntry } from './utils/storage'
 import { toKey, todayKey } from './utils/date'
 import { fetchAll, upsertEntry, subscribe } from './lib/db'
@@ -25,6 +26,9 @@ export default function App() {
 
   // Theme (dark by default per the aesthetic direction).
   const [dark, setDark] = useState(true)
+
+  // Water reminder shown once after loading completes.
+  const [waterReminder, setWaterReminder] = useState(true)
 
   // Minimum welcome-splash duration (~5s) regardless of how fast data loads.
   const [minSplash, setMinSplash] = useState(true)
@@ -201,6 +205,8 @@ export default function App() {
           onClose={() => setSelected(null)}
         />
       )}
+
+      {waterReminder && <WaterReminder onClose={() => setWaterReminder(false)} />}
     </div>
   )
 }

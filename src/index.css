@@ -87,3 +87,19 @@
 .animate-bounce-slow {
   animation: bounce-slow 1.6s ease-in-out infinite;
 }
+
+/* Cherry blossom petals drifting down with a gentle sway */
+@keyframes petal-fall {
+  0% { transform: translateY(-12vh) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.85; }
+  90% { opacity: 0.85; }
+  100% { transform: translateY(112vh) translateX(48px) rotate(380deg); opacity: 0; }
+}
+.animate-petal {
+  position: absolute;
+  top: 0;
+  animation: petal-fall linear infinite;
+  will-change: transform, opacity;
+  user-select: none;
+  pointer-events: none;
+}
