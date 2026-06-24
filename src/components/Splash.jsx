@@ -43,6 +43,10 @@ export default function Splash() {
           <span className="inline-block animate-bounce-slow align-middle">🌸</span>
         </h1>
 
+        <p className="mx-auto mt-5 max-w-md font-display text-base font-medium text-white/65 sm:text-lg">
+          “Keep blooming, the way you make my day bloom 🌸
+        </p>
+
         <div className="mt-10 flex items-center justify-center gap-2 text-sm text-white/45">
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/15 border-t-violet-400" />
           Syncing your study data…
