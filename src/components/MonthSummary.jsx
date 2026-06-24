@@ -1,4 +1,5 @@
 import { toKey, getMonthGrid, isSameMonth } from '../utils/date'
+import EasterEgg from './EasterEgg'
 
 // Compact stat strip for the visible month (a taste of the Phase 4 dashboard).
 export default function MonthSummary({ year, month, entries, accent }) {
@@ -36,19 +37,28 @@ export default function MonthSummary({ year, month, entries, accent }) {
 
   return (
     <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-      {stats.map((s) => (
-        <div
-          key={s.label}
-          className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur-md"
-        >
-          <div className="text-2xl font-bold" style={{ color: accent }}>
-            {s.value}
+      {stats.map((s) => {
+        const isAvgSleep = s.label === 'Avg sleep'
+        return (
+          <div
+            key={s.label}
+            className="relative rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur-md"
+          >
+            {/* Hidden surprise perched above the Avg Sleep box */}
+            {isAvgSleep && (
+              <div className="absolute -top-8 left-1/2 z-10 -translate-x-1/2">
+                <EasterEgg />
+              </div>
+            )}
+            <div className="text-2xl font-bold" style={{ color: accent }}>
+              {s.value}
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-white/45">
+              {s.label}
+            </div>
           </div>
-          <div className="text-[11px] font-medium uppercase tracking-wider text-white/45">
-            {s.label}
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

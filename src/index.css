@@ -88,6 +88,50 @@
   animation: bounce-slow 1.6s ease-in-out infinite;
 }
 
+/* Easter egg: idle float, shake, and shell-split animations */
+@keyframes egg-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+.animate-egg-float {
+  animation: egg-float 3s ease-in-out infinite;
+}
+
+@keyframes egg-shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  15% { transform: translateX(-7px) rotate(-5deg); }
+  30% { transform: translateX(7px) rotate(5deg); }
+  45% { transform: translateX(-6px) rotate(-4deg); }
+  60% { transform: translateX(6px) rotate(4deg); }
+  75% { transform: translateX(-3px) rotate(-2deg); }
+}
+.animate-egg-shake {
+  animation: egg-shake 0.5s ease-in-out;
+}
+
+@keyframes shell-top {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(-160px) rotate(-28deg); opacity: 0; }
+}
+@keyframes shell-bottom {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(120px) rotate(16deg); opacity: 0; }
+}
+.animate-shell-top {
+  animation: shell-top 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-shell-bottom {
+  animation: shell-bottom 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes msg-rise {
+  0% { transform: translateY(30px) scale(0.85); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.animate-msg-rise {
+  animation: msg-rise 0.5s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Cherry blossom petals drifting down with a gentle sway */
 @keyframes petal-fall {
   0% { transform: translateY(-12vh) translateX(0) rotate(0deg); opacity: 0; }
