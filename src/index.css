@@ -88,6 +88,41 @@
   animation: bounce-slow 1.6s ease-in-out infinite;
 }
 
+/* Flower garden: gentle sway + grow-in */
+@keyframes sway {
+  0%, 100% { transform: rotate(-3.5deg); }
+  50% { transform: rotate(3.5deg); }
+}
+.animate-sway {
+  transform-origin: bottom center;
+  animation: sway 4s ease-in-out infinite;
+}
+@keyframes grow-up {
+  0% { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+.animate-grow-up {
+  transform-origin: bottom center;
+  animation: grow-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Splash loading bar + the 🌸 that rides its leading edge */
+@keyframes loadbar {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+.animate-loadbar {
+  animation: loadbar 5s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+}
+
+@keyframes petal-guide {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}
+.animate-petal-guide {
+  animation: petal-guide 2.4s linear infinite;
+}
+
 /* Easter egg: idle float, shake, and shell-split animations */
 @keyframes egg-float {
   0%, 100% { transform: translateY(0) rotate(-2deg); }

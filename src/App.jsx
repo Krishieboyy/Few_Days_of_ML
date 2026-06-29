@@ -3,6 +3,7 @@ import Calendar from './components/Calendar'
 import DayModal from './components/DayModal'
 import ProfileSwitcher from './components/ProfileSwitcher'
 import MonthSummary from './components/MonthSummary'
+import Garden from './components/Garden'
 import TodayChecklist from './components/TodayChecklist'
 import Splash from './components/Splash'
 import WaterReminder from './components/WaterReminder'
@@ -26,6 +27,25 @@ export default function App() {
 
   // Theme (dark by default per the aesthetic direction).
   const [dark, setDark] = useState(true)
+
+  // Per-profile garden flower choice (a local cosmetic preference).
+  const [flowers, setFlowers] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('dora-sailorr:flowers')) || {}
+    } catch {
+      return {}
+    }
+  })
+  const setFlowerType = (type) =>
+    setFlowers((f) => {
+      const next = { ...f, [profileId]: type }
+      try {
+        localStorage.setItem('dora-sailorr:flowers', JSON.stringify(next))
+      } catch {
+        /* ignore */
+      }
+      return next
+    })
 
   // Water reminder shown once after loading completes.
   const [waterReminder, setWaterReminder] = useState(true)
@@ -176,6 +196,14 @@ export default function App() {
               onNext={nextMonth}
               onToday={goToday}
               onSelectDay={setSelected}
+            />
+
+            <Garden
+              year={view.year}
+              month={view.month}
+              entries={entries}
+              flower={flowers[profileId] || 'blossom'}
+              onFlowerChange={setFlowerType}
             />
 
             <footer className="flex items-center justify-center gap-1.5 pt-2 text-center text-xs text-white/30">
